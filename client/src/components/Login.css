@@ -1,0 +1,70 @@
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(145deg, #050505, #131313);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  padding: 20px;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 40px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 40px rgba(156, 107, 255, 0.2);
+  color: white;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.glass-card h2 {
+  margin-bottom: 20px;
+}
+
+.glass-card input {
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+}
+
+.glass-card input::placeholder {
+  color: #ccc;
+}
+
+.glass-card .login-options {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: #bbb;
+}
+
+.glass-card button {
+  width: 100%;
+  padding: 12px;
+  background: #9c6bff;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.glass-card button:hover {
+  background: #7a4ce8;
+}
+
+.glass-card .msg {
+  margin-top: 10px;
+  font-size: 14px;
+}

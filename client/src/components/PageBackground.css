@@ -1,0 +1,122 @@
+/* 🌍 Main Wrapper for Every Page */
+.page-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* ========== 🎯 Feature Backgrounds ========== */
+
+/* 🟢 Resume Score */
+.bg-resumescore {
+  background-color: #e7eee0;
+  color: #333;
+}
+
+/* 💼 One Click Portfolio */
+.bg-portfolio {
+  background-color: #353839;
+  color: white;
+}
+
+/* 🌌 Mock Interview + Question Generator - Starry Galaxy */
+.bg-mockinterview {
+  background-color: #000000;
+  background-image: 
+    radial-gradient(#ffffff22 1px, transparent 1px),
+    radial-gradient(#ffffff22 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+  color: white;
+}
+
+/* ========== 🧊 Glass Container ========== */
+.glass-container {
+  backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 30px;
+  width: 100%;
+  max-width: 720px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* 🎯 Input, Select & Textarea Styling */
+input,
+select,
+textarea {
+  background-color: white;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  width: 100%;
+  font-size: 1rem;
+}
+
+/* ⬛ Override for dark-themed sections */
+.bg-mockinterview input,
+.bg-portfolio input,
+.bg-mockinterview select,
+.bg-portfolio select,
+.bg-mockinterview textarea,
+.bg-portfolio textarea {
+  background-color: #1e1e1e;
+  color: white;
+  border: 1px solid #555;
+}
+
+/* 🎯 Buttons */
+button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* 📘 Question Card Style */
+.question-card {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 🧩 Inner wrapper (optional) */
+.inner-container {
+  max-width: 720px;
+  width: 100%;
+}
+
+/* 📦 Upload Progress Bar */
+.progress-bar-container {
+  height: 10px;
+  width: 100%;
+  background-color: #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #28a745;
+  width: 0%;
+  transition: width 0.4s ease;
+}

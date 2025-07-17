@@ -1,0 +1,36 @@
+.navigation {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1c1c1c;
+  display: flex;
+  border-radius: 30px;
+  padding: 10px 20px;
+  box-shadow: 0 0 10px #9c6bff66;
+}
+
+.list {
+  margin: 0 10px;
+  color: white;
+  font-size: 24px;
+  position: relative;
+  text-align: center;
+}
+
+.list a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.list span {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.list.active {
+  color: #9c6bff;
+}

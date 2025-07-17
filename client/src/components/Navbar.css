@@ -1,0 +1,24 @@
+.navbar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 20px 40px;
+background: #0f0f0f;
+color: white;
+font-family: 'Poppins', sans-serif;
+}
+
+.logo {
+font-size: 24px;
+color: #9c6bff;
+font-weight: 600;
+}
+
+.tagline {
+font-size: 14px;
+background: #1e1e1e;
+color: #eee;
+padding: 6px 20px;
+border-radius: 999px;
+box-shadow: 0 0 10px #9c6bff44;
+}
