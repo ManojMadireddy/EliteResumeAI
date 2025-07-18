@@ -11,7 +11,7 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:7000/api/auth/register", {
+      const res = await axios.post("https://eliteresumeai-1.onrender.com/api/auth/register", {
         email,
         password,
       });

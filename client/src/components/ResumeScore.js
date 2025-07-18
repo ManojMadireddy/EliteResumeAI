@@ -18,7 +18,7 @@ function ResumeScore() {
     data.append("role", role);
 
     try {
-      const res = await axios.post("http://localhost:7000/api/resume/upload", data, {
+      const res = await axios.post("https://eliteresumeai-1.onrender.com/api/resume/upload", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

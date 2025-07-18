@@ -18,7 +18,7 @@ function QuestionGenerator() {
     data.append("role", role);
 
     try {
-      const res = await fetch("http://localhost:7000/api/questions/generate", {
+      const res = await fetch("https://eliteresumeai-1.onrender.com/api/questions/generate", {
         method: "POST",
         body: data,
       });

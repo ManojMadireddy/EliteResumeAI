@@ -20,7 +20,7 @@ const PortfolioForm = () => {
 
   const handleGenerate = async () => {
     try {
-      const res = await axios.post("http://localhost:7000/api/portfolio/generate", form);
+      const res = await axios.post("https://eliteresumeai-1.onrender.com/api/portfolio/generate", form);
       setHtml(res.data.html);
       setMsg("✅ Portfolio generated!");
     } catch (err) {
