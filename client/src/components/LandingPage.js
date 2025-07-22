@@ -1,14 +1,18 @@
-// src/components/LandingPage.js
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
+  const navigate = useNavigate();
+
   return (
-    <div className="landing-page">
-      <h1>EliteResumeAI</h1>
-      <Link to="/login"><button>Login</button></Link>
-      <Link to="/register"><button>Register</button></Link>
-      <Link to="/dashboard"><button>Dashboard</button></Link>
+    <div style={{ textAlign: "center", marginTop: "20vh" }}>
+      <h1 style={{ fontSize: 40 }}>EliteResumeAI</h1>
+      <button
+        onClick={() => navigate("/auth")}
+        style={{ marginTop: 20, padding: "12px 24px", fontSize: 18 }}
+      >
+        Start Your Journey
+      </button>
     </div>
   );
 }
