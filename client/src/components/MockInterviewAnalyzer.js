@@ -170,39 +170,62 @@ function MockInterviewAnalyzer() {
   };
 
   const getAIFeedback = async () => {
-    const prompt = `
-### Content Analysis
-- Review: "${transcript}"
-- Relevant to: "${question}"
+  const prompt = `
+You're an expert AI interview coach. Given the candidate's verbal answer and their body language feedback, provide detailed, structured interview feedback.
 
-### Body Language Feedback
-- Summary: "${poseFeedback}"
+Respond in this exact format:
 
-### Tips for Improvement
-- Improve content and non-verbal delivery
+🧠 AI Feedback (All Aspects Analyzed):
 
-### Final Note
-- Encourage improvement with next steps
-    `;
+✅ Verbal Content:
+Clarity: ...
+Depth: ...
+Tone: ...
 
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer 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`, // Replace with your key
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "tencent/hunyuan-a13b-instruct:free",
-        messages: [
-          { role: "system", content: "You are an expert interview coach." },
-          { role: "user", content: prompt },
-        ],
-      }),
-    });
+👁️ Body Language Analysis:
+Eye Contact: ...
+Posture: ...
+Facial Expressions: ...
+Hand Gestures: ...
 
-    const data = await res.json();
-    setAiFeedback(data.choices?.[0]?.message?.content || "No feedback.");
-  };
+🎤 Voice & Speech:
+Tone: ...
+Pace: ...
+Filler Words: ...
+Energy: ...
+
+✅ Suggestions to Improve Further:
+1. ...
+2. ...
+3. ...
+
+---
+
+🗨️ Question: ${question}
+
+📝 Answer: ${transcript || "No answer provided."}
+
+🕺 Body Language Summary: ${poseFeedback}
+`;
+
+  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer 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`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "tencent/hunyuan-a13b-instruct:free",
+      messages: [
+        { role: "system", content: "You are an expert AI interview coach." },
+        { role: "user", content: prompt },
+      ],
+    }),
+  });
+
+  const data = await res.json();
+  setAiFeedback(data.choices?.[0]?.message?.content || "No feedback.");
+};
 
   useEffect(() => {
     askNewQuestion();

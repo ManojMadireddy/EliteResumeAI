@@ -2,6 +2,7 @@
   "dependencies": {
     "@mediapipe/camera_utils": "^0.3.1675466862",
     "@mediapipe/pose": "^0.5.1675469404",
-    "axios": "^1.10.0"
+    "axios": "^1.10.0",
+    "cors": "^2.8.5"
   }
 }

@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@mediapipe/camera_utils": "^0.3.1675466862",
+    "@mediapipe/drawing_utils": "^0.3.1675466124",
     "@mediapipe/holistic": "^0.5.1675471629",
     "archiver": "^7.0.1",
     "axios": "^1.10.0",

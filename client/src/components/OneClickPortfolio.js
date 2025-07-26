@@ -29,7 +29,7 @@ const OneClickPortfolio = () => {
     e.preventDefault();
     setError("");
     try {
-      const res = await axios.post("https://eliteresumeai-1.onrender.com/api/portfolio/generate", formData);
+      const res = await axios.post("http://localhost:3000/api/portfolio/generate", formData);
       setPortfolioHtml(res.data.html || "");
     } catch (err) {
       console.error("Portfolio Error:", err);

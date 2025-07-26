@@ -1,3 +1,4 @@
+// client/src/components/Register.js
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
@@ -8,10 +9,18 @@ function Register() {
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
 
+  // Define your API base URL dynamically
+  // For Create React App:
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3000";
+  // If you're using Vite, it would be:
+  // const API_BASE_URL = import.meta.env.VITE_APP_API_URL || "http://localhost:3000";
+
+
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("https://eliteresumeai-1.onrender.com/api/auth/register", {
+      // Use the dynamic API_BASE_URL
+      const res = await axios.post(`${API_BASE_URL}/api/auth/register`, {
         email,
         password,
       });
