@@ -1,8 +1,9 @@
+// client/src/components/MockInterviewAnalyzer.js
 import React, { useRef, useState, useEffect } from "react";
 import { Holistic } from "@mediapipe/holistic";
 import { Camera } from "@mediapipe/camera_utils";
 import "./PageBackground.css"; // ✅ Make sure this CSS file exists
- // ✅ Import your page background styles
+import { supabase } from "../supabaseClient"; // Import Supabase client
 
 const QUESTIONS = [
   "Tell me about a project you're most proud of.",
@@ -56,6 +57,7 @@ const QUESTIONS = [
   "What is your approach to managing documentation in a project?",
   "How do you track and reflect on your project performance after completion?"
 ];
+
 function MockInterviewAnalyzer() {
   const videoRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -67,10 +69,28 @@ function MockInterviewAnalyzer() {
   const [transcript, setTranscript] = useState("");
   const [poseFeedback, setPoseFeedback] = useState("Waiting...");
   const [aiFeedback, setAiFeedback] = useState("");
+  const [loadingAi, setLoadingAi] = useState(false); // New loading state for AI feedback
+  const [userId, setUserId] = useState(null); // To store the current user's ID
+
+  useEffect(() => {
+    // Get the current authenticated user's ID from Supabase
+    const getSession = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+      } else {
+        // This case should ideally be handled by RouteProtect, but good to have a fallback
+        console.warn("User not authenticated in MockInterviewAnalyzer.");
+      }
+    };
+    getSession();
+    askNewQuestion(); // Ask initial question on component mount
+  }, []);
 
   const askNewQuestion = () => {
     setTranscript("");
     setAiFeedback("");
+    setPoseFeedback("Waiting..."); // Reset pose feedback for new question
     const randomQ = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
     setQuestion(randomQ);
   };
@@ -141,7 +161,12 @@ function MockInterviewAnalyzer() {
 
   const toggleListening = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return alert("Speech recognition not supported.");
+    if (!SpeechRecognition) {
+      // Using a custom modal/message box instead of alert()
+      // You'll need to implement a modal component for this
+      console.error("Speech recognition not supported in this browser.");
+      return;
+    }
 
     if (!isListening) {
       const recognition = new SpeechRecognition();
@@ -159,7 +184,9 @@ function MockInterviewAnalyzer() {
       };
 
       recognition.onerror = (e) => {
-        alert("Mic error: " + e.error);
+        console.error("Mic error:", e.error);
+        // Using a custom modal/message box instead of alert()
+        // You'll need to implement a modal component for this
       };
 
       recognition.start();
@@ -170,66 +197,68 @@ function MockInterviewAnalyzer() {
   };
 
   const getAIFeedback = async () => {
-  const prompt = `
-You're an expert AI interview coach. Given the candidate's verbal answer and their body language feedback, provide detailed, structured interview feedback.
+    setLoadingAi(true);
+    setAiFeedback("");
 
-Respond in this exact format:
+    if (!userId) {
+      setAiFeedback("Error: User not authenticated. Cannot get AI feedback.");
+      setLoadingAi(false);
+      return;
+    }
 
-🧠 AI Feedback (All Aspects Analyzed):
+    try {
+      // --- IMPORTANT: This now calls a Vercel Serverless Function ---
+      // You MUST create a serverless function (e.g., in api/ai-feedback.js)
+      // that securely calls the OpenRouter API with your API key.
+      const res = await fetch("/api/ai-feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // You might send an authorization header if your serverless function requires it
+          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          question: question,
+          answer: transcript || "No answer provided.",
+          bodyLanguage: poseFeedback,
+        }),
+      });
 
-✅ Verbal Content:
-Clarity: ...
-Depth: ...
-Tone: ...
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to get AI feedback from serverless function.");
+      }
 
-👁️ Body Language Analysis:
-Eye Contact: ...
-Posture: ...
-Facial Expressions: ...
-Hand Gestures: ...
+      const data = await res.json();
+      const generatedFeedback = data.feedback || "No feedback.";
+      setAiFeedback(generatedFeedback);
 
-🎤 Voice & Speech:
-Tone: ...
-Pace: ...
-Filler Words: ...
-Energy: ...
+      // --- Save the interview session to Supabase ---
+      const { error: dbError } = await supabase
+        .from('mock_interview_sessions') // Ensure you have this table in Supabase
+        .insert([
+          {
+            user_id: userId,
+            question_asked: question,
+            user_answer: transcript,
+            body_language_feedback: poseFeedback,
+            ai_feedback: generatedFeedback,
+            session_date: new Date().toISOString(),
+          },
+        ]);
 
-✅ Suggestions to Improve Further:
-1. ...
-2. ...
-3. ...
+      if (dbError) {
+        console.error("Error saving mock interview session to DB:", dbError.message);
+        // You might want to show a message to the user that session saving failed
+      }
 
----
-
-🗨️ Question: ${question}
-
-📝 Answer: ${transcript || "No answer provided."}
-
-🕺 Body Language Summary: ${poseFeedback}
-`;
-
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer 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`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "tencent/hunyuan-a13b-instruct:free",
-      messages: [
-        { role: "system", content: "You are an expert AI interview coach." },
-        { role: "user", content: prompt },
-      ],
-    }),
-  });
-
-  const data = await res.json();
-  setAiFeedback(data.choices?.[0]?.message?.content || "No feedback.");
-};
-
-  useEffect(() => {
-    askNewQuestion();
-  }, []);
+    } catch (err) {
+      console.error("Error getting AI feedback:", err);
+      setAiFeedback("❌ Error getting AI feedback: " + err.message);
+    } finally {
+      setLoadingAi(false);
+    }
+  };
 
   return (
     <div className="page-wrapper bg-mockinterview">
@@ -262,7 +291,9 @@ Energy: ...
           <button onClick={toggleListening} style={{ marginRight: 10 }}>
             {isListening ? "🛑 Stop Voice Answer" : "🎙 Start Voice Answer"}
           </button>
-          <button onClick={getAIFeedback}>🚀 Get AI Feedback</button>
+          <button onClick={getAIFeedback} disabled={loadingAi || !question || (!transcript && !poseFeedback)}>
+            {loadingAi ? "Analyzing..." : "🚀 Get AI Feedback"}
+          </button>
         </div>
 
         <div style={{ background: "#222", padding: 15, borderRadius: 8, marginBottom: 20 }}>

@@ -1,7 +1,7 @@
 // client/src/components/Register.js
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { supabase } from "../supabaseClient"; // Import your Supabase client
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -9,26 +9,30 @@ function Register() {
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
 
-  // Define your API base URL dynamically
-  // For Create React App:
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3000";
-  // If you're using Vite, it would be:
-  // const API_BASE_URL = import.meta.env.VITE_APP_API_URL || "http://localhost:3000";
-
-
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      // Use the dynamic API_BASE_URL
-      const res = await axios.post(`${API_BASE_URL}/api/auth/register`, {
+      setMsg("Registering...");
+      // Use Supabase for registration
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
-      localStorage.setItem("token", res.data.token);
-      setMsg("✅ Registered");
-      navigate("/upload");
+
+      if (error) throw error;
+
+      // Supabase sends a confirmation email by default.
+      // You might want to show a message about checking email.
+      if (data.user) {
+          setMsg("✅ Registration successful! Please check your email for a verification link.");
+          // You might redirect after email confirmation, or if email confirmation is off
+          // localStorage.setItem("token", data.session.access_token); // If auto-login
+          // navigate("/upload");
+      } else {
+         setMsg("✅ Registration email sent! Please check your inbox to verify your account.");
+      }
     } catch (err) {
-      setMsg("❌ " + (err.response?.data?.error || "Register failed"));
+      setMsg("❌ " + (err.message || "Registration failed"));
     }
   };
 

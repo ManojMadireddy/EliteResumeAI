@@ -1,9 +1,9 @@
 // client/src/components/Login.js
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react"; // Add useEffect
 import { useNavigate, Link } from "react-router-dom";
-import Navbar from "./Navbar"; // 👈 EliteResumeAI title + quote
-import "./Login.css"; // glass style
+import { supabase } from "../supabaseClient"; // Import your Supabase client
+import Navbar from "./Navbar";
+import "./Login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -11,50 +11,53 @@ function Login() {
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
 
-  // Define your API base URL dynamically (same as Register.js)
-  // For Create React App:
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3000";
-  // If you're using Vite, it would be:
-  // const API_BASE_URL = import.meta.env.VITE_APP_API_URL || "http://localhost:3000";
+  // Listen for auth state changes (e.g., after successful login)
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (session) {
+          localStorage.setItem("token", session.access_token); // Save Supabase token
+          setMsg("✅ Logged in");
+          navigate("/upload");
+        }
+      }
+    );
+
+    // Cleanup listener on component unmount
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [navigate]);
 
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Use the dynamic API_BASE_URL
-      const res = await axios.post(`${API_BASE_URL}/api/auth/login`, {
+      setMsg("Logging in...");
+      // Use Supabase for login
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      localStorage.setItem("token", res.data.token);
-      setMsg("✅ Logged in");
-      navigate("/upload");
+
+      if (error) throw error;
+
+      // Auth state change listener above will handle navigation on success
     } catch (err) {
-      setMsg("❌ " + (err.response?.data?.error || "Login failed"));
+      setMsg("❌ " + (err.message || "Login failed"));
     }
   };
 
   return (
+    // ... (rest of your Login component JSX remains largely the same)
     <>
-      <Navbar /> {/* Shows EliteResumeAI title and quote at top */}
+      <Navbar />
       <div className="login-page">
         <div className="glass-card">
           <h2>Login</h2>
           <form onSubmit={handleLogin}>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <input type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <input type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             <div className="login-options">
               <label><input type="checkbox" /> Remember me</label>
               <a href="#">Forgot password?</a>
