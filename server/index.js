@@ -19,11 +19,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ✅ CORS Setup
+// Get the client URL from environment variable on Render
+const CLIENT_URL = process.env.CLIENT_URL;
+
 app.use(cors({
   origin: [
-    "http://localhost:3001", // 🟢 FRONTEND LOCAL
-    "https://elite-resume-ai.vercel.app" // optional Vercel for future
-  ],
+    "http://localhost:3001", // For local frontend development
+    "http://localhost:3000", // For local backend testing
+    CLIENT_URL, // THIS IS CRUCIAL: Your deployed Vercel frontend URL will be here
+  ].filter(Boolean), // Filter out any undefined/null entries if CLIENT_URL is not set locally
   credentials: true, // 🟢 Allows cookies, headers
 }));
 
